@@ -1,5 +1,6 @@
 import { Controller, Post, Headers, Body } from '@nestjs/common';
 import { GithubService } from './github.service';
+import { GitHubEvent, GitHubPayload } from 'src/interfaces/github.interface';
 
 @Controller('github')
 export class GithubController {
@@ -7,10 +8,10 @@ export class GithubController {
 
   @Post() //La mayoria de los wehooks son posts
   webHookHandler(
-    @Headers('x-github-event') githubEvent: string,
-    @Body() body: any,
+    @Headers('x-github-event') githubEvent: GitHubEvent,
+    @Body() body: GitHubPayload,
   ) {
-    console.log({ githubEvent });
+    this.githubService.handlePayload(githubEvent, body);
     return { githubEvent };
   }
 }
