@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { GitHubEvent, GitHubPayload } from 'src/interfaces/github.interface';
+import { DiscordService } from '../services/discord.service';
 
 @Injectable()
 export class GithubService {
-  public handlePayload(event: GitHubEvent, payload: GitHubPayload) {
+  constructor(private readonly discordService: DiscordService) {}
+
+  public async handlePayload(event: GitHubEvent, payload: GitHubPayload) {
     let message = '';
 
     switch (event) {
@@ -17,7 +20,7 @@ export class GithubService {
         message = `unknown event ${event}`;
     }
 
-    console.log(message);
+    await this.discordService.notify(message);
   }
 
   private handleStar(payload: GitHubPayload): string {
